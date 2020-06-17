@@ -52,8 +52,28 @@ app.post("/sensor", function (req, res) {
   res.status(200).send('OK');
 });
 
+app.post("/color", function (req, res) {
+
+})
+
 
 //Helper function to format coordinates to needed format
+
+const setColor = async (url = "", data) => {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  try {
+    const status = await response.json();
+    console.log("POST REQUEST /COLOR: ", status)
+  } catch (error) {
+    console.log("POST GET City ERROR: ", error);
+  }
+};
 
 function getValue() {
   const values = results.slice(0,9);
