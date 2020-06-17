@@ -53,9 +53,10 @@ app.post("/sensor", function (req, res) {
 });
 
 app.post("/color", function (req, res) {
-
+    setColor('http://192.168.1.20:80/color', req.body).then(function () {
+      res.status(200).send();
+    })
 })
-
 
 //Helper function to format coordinates to needed format
 
@@ -68,10 +69,10 @@ const setColor = async (url = "", data) => {
     body: JSON.stringify(data),
   });
   try {
-    const status = await response.json();
-    console.log("POST REQUEST /COLOR: ", status)
+    const status = await response;
+    console.log("POST REQUEST /COLOR: ", status.statusText)
   } catch (error) {
-    console.log("POST GET City ERROR: ", error);
+    console.log("Change Color Error: ", error);
   }
 };
 

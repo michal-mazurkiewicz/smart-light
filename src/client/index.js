@@ -1,4 +1,4 @@
-import { handleSubmit, getCountry } from "./js/formHandler";
+import { handleSubmit, handlePower, handleColor } from "./js/formHandler";
 
 
 import "./styles/resets.scss";
@@ -7,4 +7,4 @@ import "./styles/form.scss";
 import "./styles/header.scss";
 import "./styles/footer.scss";
 
-export {handleSubmit, getCountry };
+export {handleSubmit, handlePower, handleColor };
