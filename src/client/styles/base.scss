@@ -1,0 +1,75 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: white;
+  background-image: linear-gradient(transparent, white 100%),
+    url("https://pixabay.com/get/57e9dc404d52a814f6da8c7dda7936781d3cd7e45a576c4870267ad5974cc059b0_1280.jpg"); /* Used if the image is unavailable */
+  opacity: 0.8;
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+  z-index: 0;
+}
+
+main {
+  padding-top: 50px;
+  display: flex;
+  flex: 2;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  .title {
+    font-size: 25px;
+  }
+  .results {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+
+  #trip-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #b5dd587a; /* Used if the image is unavailable */
+    height: 500px; /* You must set a specified height */
+    width: 750px;
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
+    font-size: 1.5em;
+    font-weight: bold;
+    z-index: 2;
+    h1,
+    div {
+      color: wheat;
+    }
+  }
+
+  #trip-data {
+    background: rgb(6, 45, 46);
+    background: linear-gradient(
+      18deg,
+      rgba(6, 45, 46, 0.582) 100%,
+      rgba(0, 212, 255, 1) 100%
+    );
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+
+  }
+}
+
+section {
+  max-width: 800px;
+  margin: 50px auto;
+
+  div {
+    margin-top: 10px;
+  }
+}
