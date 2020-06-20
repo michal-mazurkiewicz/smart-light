@@ -21,21 +21,21 @@ passport.use(
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
     },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // TODO: Save user to our database
-      User.findOne({ googleId: profile.id }).then((existingUser) => {
-        if (existingUser) {
-          // LogIn
-          done(null, existingUser);
-        } else {
-          new User({
-            googleId: profile.id,
-            name: profile.name.givenName,
-          })
-            .save()
-            .then((user) => done(null, user));
-        }
-      });
+      const existingUser = await User.findOne({ googleId: profile.id });
+
+      if (existingUser) {
+        // LogIn
+        done(null, existingUser);
+      } else {
+        await new User({
+          googleId: profile.id,
+          name: profile.name.givenName,
+        })
+          .save()
+          .then((user) => done(null, user));
+      }
     }
   )
 );
