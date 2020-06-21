@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 
 class Navbar extends Component {
   renderContent() {
-    switch (this.props.authUser) {
+    const { authUser } = this.props;
+    switch (authUser) {
       case null:
         return;
       case false:
@@ -27,19 +28,18 @@ class Navbar extends Component {
               <a href="/settings">Settings</a>
             </li>
             <li>
-              <a href="/settings">Settings</a>
+              <span>Hello, {authUser.name}</span>
             </li>
             <li>
               <a href="/auth/logout">Logout</a>
             </li>
           </ul>
         );
+
     }
   }
 
   render() {
-    console.log(this.props.authUser);
-    console.log("" ? true : false);
     return (
       <nav>
         <div className="nav-wrapper">
@@ -53,8 +53,8 @@ class Navbar extends Component {
   }
 }
 
-function mapStateToProps({ authUser }) {
-  return { authUser };
+function mapStateToProps(state) {
+  return {authUser: state.authUser };
 }
 
 export default connect(mapStateToProps)(Navbar);
