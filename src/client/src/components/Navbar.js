@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 class Navbar extends Component {
   renderContent() {
@@ -10,9 +11,7 @@ class Navbar extends Component {
       case false:
         return (
           <ul id="nav-mobile" className="left hide-on-med-and-down">
-            <li>
-              <a href="/auth/google">Login with Google</a>
-            </li>
+
           </ul>
         );
       default:
@@ -25,7 +24,10 @@ class Navbar extends Component {
               <a href="/dashboard">Dashboard</a>
             </li>
             <li>
-              <a href="/settings">Settings</a>
+              <Link to={'/controller'}>Controller</Link>
+            </li>
+            <li>
+              <Link to={'/devices'}>Devices</Link>
             </li>
             <li>
               <span>Hello, {authUser.name}</span>
@@ -35,7 +37,6 @@ class Navbar extends Component {
             </li>
           </ul>
         );
-
     }
   }
 
@@ -43,9 +44,9 @@ class Navbar extends Component {
     return (
       <nav>
         <div className="nav-wrapper">
-          <a href="/" className="brand-logo right">
+          <Link to={this.props.authUser ? '/dashboard' : '/'} className="brand-logo right">
             Smart Light
-          </a>
+          </Link>
           {this.renderContent()}
         </div>
       </nav>
@@ -54,7 +55,7 @@ class Navbar extends Component {
 }
 
 function mapStateToProps(state) {
-  return {authUser: state.authUser };
+  return { authUser: state.authUser };
 }
 
 export default connect(mapStateToProps)(Navbar);

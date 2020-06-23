@@ -107,19 +107,3 @@ function getValue() {
   const result = value / 10;
   return { value: result };
 }
-
-function round(data) {
-  let { lon, lat } = data;
-
-  lon = Number(lon).toFixed(1);
-  lat = Number(lat).toFixed(1);
-
-  return { lon, lat };
-}
-
-module.exports = round;
-
-// Logic:
-//Getting Data:
-//Input City -> Get lan long -> Get Weather
-//           -> Get Picture                  -> Save the Trip -> Update UI;

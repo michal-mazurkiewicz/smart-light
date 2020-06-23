@@ -1,0 +1,10 @@
+.devices{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+table{
+    width: 50%;
+}
