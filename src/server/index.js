@@ -42,72 +42,52 @@ app.listen(8000, function () {
   );
 });
 
-//Objects:
-
-users = [];
-
-user = {
-  id: "userId",
-  deviceList: [{ device: "ip", currentSettings: "currentPower" }],
-};
-
-let sensors = [{ ip: "192.168.1.14", meassures: [] }],
-  results = [];
-
-sensorData = {
-  lumminance: "",
-};
-
-let ctr = new Controller(0.25, 0.01, 0.01, 1);
-
-//Declare Endpoints:
-
 //Get:
 app.get("/", function (req, res) {
   res.sendFile("dist/index.html");
 });
 
-//return trip object and clean data after
-app.get("/getData", function (req, res) {
-  console.log("Executing GET /data ");
-  res.send(results.slice(0, 9));
-});
+const ctr = new Controller(0.25, 0.01, 0.01, 1);
+ctr.setTarget(500);
 
-app.get("/getValue", function (req, res) {
-  console.log("Executing GET /data ");
-  res.send(getValue());
-});
+let light = {
+  device: "192.168.1.18",
+  port: "80",
+  currentSettings: 10,
+  maxPower: 255,
+  targetIlluminance: 500,
+};
 
-//Post:
+let sensors = [
+    { ip: "192.168.1.14", meassures: [] },
+    { ip: "192.168.1.16", meassures: [] },
+  ],
+  results = [];
+
 app.post("/sensor", function (req, res) {
   console.log("Incomming POST request: ", req.body);
   const { illumminance } = req.body;
   let currSensor = sensors.find((sensor) => sensor.ip === req.body.sensor);
   currSensor.meassures.unshift(illumminance);
 
-  if (currSensor.meassures.length > 15) {
-    let sorted = currSensor.meassures.sort((a, b) => a - b);
-    console.log("SORTED: ", sorted);
-    let sum = sorted.slice(5, 15).reduce((a, b) => a + b, 0)
-    let avg = (sum / 10) || 0;
-
-
-    console.log("AVERAGE: ", avg);
-    ctr.setTarget(30);
-
-    let output = illumminance;
-    let input = ctr.update(output);
-    console.log("CORRECTION", input);
-
-    currSensor.meassures.splice(0, 15);
+  if (
+    illumminance / light.targetIlluminance > 1.03 ||
+    illumminance / light.targetIlluminance < 0.97
+  ) {
+    if (currSensor.meassures.length > 15) {
+      getNewPowerValue(currSensor, light).then((data) =>
+        setPower(`http://192.168.1.18:80/color`, {
+          light: 1,
+          power: data,
+          red: 255,
+          green: 255,
+          blue: 255,
+          white: 255,
+        })
+      );
+    }
   }
   res.status(200).send("OK");
-});
-
-app.post("/color", function (req, res) {
-  setColor("http://192.168.1.20:80/color", req.body).then(function () {
-    res.status(200).send();
-  });
 });
 
 //Helper function to format coordinates to needed format
@@ -126,6 +106,33 @@ const setColor = async (url = "", data) => {
   } catch (error) {
     console.log("Change Color Error: ", error);
   }
+};
+
+const correlationCal = (currSensor, light) => {
+  let sorted = currSensor.meassures.sort((a, b) => a - b);
+  let sum = sorted.slice(5, 15).reduce((a, b) => a + b, 0);
+  let avg = sum / 10 || 0;
+
+  let input = ctr.update(avg);
+  currSensor.meassures.splice(0, 15);
+  console.log("CORRELATION INPUT: ", input);
+  let newData = adjustPower(input, light.currentSettings);
+  return newData;
+};
+
+const adjustPower = (correlation, currentPower) => {
+  console.log("ADJUSTMENT: ", (currentPower * correlation) / 100);
+  let newValue = currentPower + (currentPower * correlation) / 100;
+  console.log("OLD VALUE: ", currentPower);
+  light.currentSettings = newValue;
+  console.log("NEW VALUE: ", light.currentSettings);
+
+  return newValue;
+};
+
+const getNewPowerValue = async (currSensor, light) => {
+  let newPower = await correlationCal(currSensor, light);
+  return newPower;
 };
 
 const setPower = async (url = "", data) => {
@@ -157,3 +164,9 @@ function getValue() {
 //2 minuty collecting
 //20% najniższych liczb
 //Średnią albo co kilka minut najwyższą wartość.
+//Open TCP connectio with client.
+//Send to him data from sensors.
+//Send current value of light
+
+//Calculate the value of light and send correction to the lamp
+//If current light and target difference is less than 5% dont change it
