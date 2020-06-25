@@ -1,5 +1,21 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://localhost:8000"
 
-const Dashboard = () => <h2>Dashboard</h2>
+function Dashboard(){
+    const [response, setResponse] = useState("");
+
+    useEffect (() => {
+        const socket = socketIOClient(ENDPOINT);
+        socket.on("FromAPI", data => {
+            setResponse(data);
+        })
+        return () => socket.disconnect()
+    }, [])
+
+    return (
+        <p> It's <time dateTime={response}>{response}</time></p>
+    )
+}
 
 export default Dashboard

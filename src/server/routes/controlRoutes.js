@@ -1,7 +1,15 @@
-module.exports = (app) => {
+const fetch = require("node-fetch");
+const Controller = require("node-pid-controller");
+const ctr = new Controller(0.25, 0.015, 0, 1);
+let target = 500;
+ctr.setTarget(target);
+
+let mode = "AUTO";
+
+module.exports = (app, light, data) => {
 
   app.post("/color", function (req, res) {
-    setColor("http://192.168.1.20:80/color", req.body).then(function () {
+    setColor("http://192.168.1.18:80/color", req.body).then(function () {
       res.status(200).send();
     });
   });
@@ -15,6 +23,7 @@ module.exports = (app) => {
       blue: 0,
       white: 0,
     });
+    res.send();
   });
 
   app.post("/turnOn", function (req, res) {
@@ -29,7 +38,111 @@ module.exports = (app) => {
   });
 
   app.post("/switchMode", function (req, res) {
-   mode = req.body.mode;
+    const {newMode} = req.body
+    mode = newMode;
+    res.status(200).send()
   });
 
+  app.post("/sensor", function (req, res) {
+    console.log("Incomming POST request: ", req.body);
+    const { illumminance } = req.body;
+
+    if (mode === "AUTO") {
+      if (
+        illumminance / light.targetIlluminance > 1.03 ||
+        illumminance / light.targetIlluminance < 1
+      ) {
+        getNewPowerValue(illumminance, light).then((newPower) =>
+          setPower(`http://192.168.1.18:80/color`, {
+            ...data,
+            ...(data.power = newPower),
+          })
+        );
+      }
+    }
+    res.status(200).send("OK");
+  });
+
+  app.post("/setTarget", function (req, res){
+    const {newTarget} = req.body;
+    target = newTarget;
+    light.targetIlluminance = newTarget;
+    res.status(200).send();
+
+  })
+
 };
+
+//Helper functions:
+
+const setColor = async (url = "", data) => {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  try {
+    const status = await response;
+    console.log("POST REQUEST /COLOR: ", status.statusText);
+  } catch (error) {
+    console.log("Change Color Error: ", error);
+  }
+};
+
+
+const getCorrelation = async (illuminance) => {
+  let correlation = ctr.update(illuminance);
+  return correlation;
+};
+
+const adjustPower = async (correlation, light) => {
+  let newValue = Math.round(light.currentSettings + (light.currentSettings * correlation) / 100);
+  console.log("OLD VALUE: ", light.currentSettings);
+  console.log("NEW VALUE: ", newValue);
+  if (newValue >= 255) {
+    light.currentSettings = 255;
+    return 255;
+  } else if (newValue < 0) {
+    light.currentSettings = 1;
+    return 0;
+  } else {
+    light.currentSettings = newValue;
+    return newValue;
+  }
+};
+
+const getNewPowerValue = async (illuminance, light) => {
+  const newValue = await getCorrelation(illuminance).then((correlation) =>
+    adjustPower(correlation, light)
+  );
+  console.log("VALUE FROM PROM: ", newValue);
+  return newValue;
+};
+
+const setPower = async (url = "", data) => {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  try {
+    const status = await response;
+    console.log("POST REQUEST /COLOR: ", status.statusText);
+  } catch (error) {
+    console.log("Change Color Error: ", error);
+  }
+};
+
+//socket data:
+
+socketData = {
+  timeStamp: "",
+  illuminance: "",
+  lightPower: "",
+}
+
+

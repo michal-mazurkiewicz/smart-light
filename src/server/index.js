@@ -1,12 +1,13 @@
 //Dependencies
-const fetch = require("node-fetch");
+
 const cookieSession = require("cookie-session");
 const passport = require("passport");
+const http = require('http')
 const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const Controller = require("node-pid-controller");
+const socketIo = require("socket.io");
 require("./models/User");
 require("./services/passport");
 
@@ -17,6 +18,8 @@ mongoose.connect(process.env.MONGO_URI, {
 
 //Server Settings
 const app = express();
+const server = http.createServer(app)
+const io = socketIo(server);
 
 app.use(
   cookieSession({
@@ -29,14 +32,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 require("./routes/authRoutes")(app);
-require("./routes/controlRoutes")(app);
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //Start Server and listen on port 8000
-app.listen(8000, function () {
+server.listen(8000, function () {
   console.log(
     "Smart Light Mi listening on port 8000! \n You can close it by click Ctrl + c"
   );
@@ -47,8 +49,26 @@ app.get("/", function (req, res) {
   res.sendFile("dist/index.html");
 });
 
-const ctr = new Controller(0.8, 0.8, 0, 1);
-ctr.setTarget(500);
+let interval;
+
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  if (interval) {
+    clearInterval();
+  }
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    clearInterval(interval);
+  });
+});
+
+const getApiAndEmit = (socket) => {
+  const response = new Date();
+  socket.emit("FromAPI", response);
+};
+
+//Dummy Data
 
 let light = {
   device: "192.168.1.18",
@@ -68,100 +88,13 @@ let data = {
 };
 
 let sensors = [
-    { ip: "192.168.1.14", meassures: [] },
-    { ip: "192.168.1.16", meassures: [] },
-  ],
-  results = [];
+  { ip: "192.168.1.14", meassures: [] },
+  { ip: "192.168.1.16", meassures: [] },
+];
 
-app.post("/sensor", function (req, res) {
-  console.log("Incomming POST request: ", req.body);
-  const { illumminance } = req.body;
-  if (
-    illumminance / light.targetIlluminance > 1.03 ||
-    illumminance / light.targetIlluminance < 0.99
-  ) {
-    getNewPowerValue(illumminance, light.currentSettings).then((newPower) =>
-      setPower(`http://192.168.1.18:80/color`, {
-        ...data,
-        ...(data.power = newPower),
-      })
-    );
-  }
-  res.status(200).send("OK");
-});
+require("./routes/controlRoutes")(app, light, data);
 
 //Helper function to format coordinates to needed format
-
-const setColor = async (url = "", data) => {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  try {
-    const status = await response;
-    console.log("POST REQUEST /COLOR: ", status.statusText);
-  } catch (error) {
-    console.log("Change Color Error: ", error);
-  }
-};
-
-const getCorrelation = async (illuminance) => {
-  let correlation = ctr.update(illuminance);
-  return correlation;
-};
-
-const adjustPower = async (correlation, currentPower) => {
-  let newValue = Math.round(currentPower + (currentPower * correlation) / 100);
-  console.log("OLD VALUE: ", currentPower);
-  console.log("NEW VALUE: ", newValue);
-  if (newValue >= 255) {
-    light.currentSettings = 255;
-    return 255;
-  } else if (newValue < 0) {
-    light.currentSettings = 0;
-    return 0;
-  } else {
-    return newValue;
-  }
-};
-
-const getNewPowerValue = async (illuminance, light) => {
-  const newValue = await getCorrelation(illuminance).then((correlation) =>
-    adjustPower(correlation, light)
-  );
-  console.log("VALUE FROM PROM: ", newValue);
-  return newValue;
-};
-
-const setPower = async (url = "", data) => {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  try {
-    const status = await response;
-    console.log("POST REQUEST /COLOR: ", status.statusText);
-  } catch (error) {
-    console.log("Change Color Error: ", error);
-  }
-};
-
-function getValue() {
-  const values = results.slice(0, 9);
-  let value = 0;
-  values.forEach((v) => {
-    value += v;
-  });
-  const result = value / 10;
-  return { value: result };
-}
-
 //2 minuty collecting
 //20% najniższych liczb
 //Średnią albo co kilka minut najwyższą wartość.

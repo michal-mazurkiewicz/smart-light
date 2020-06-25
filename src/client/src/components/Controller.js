@@ -17,7 +17,7 @@ class Controller extends Component{
               </div>
               <div>
                 <input type="range" id="volume" min="0" max="255" step="1" />
-                <label for="volume">Power</label>
+                <label >Power</label>
               </div>
             </div>
           );
