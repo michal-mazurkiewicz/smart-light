@@ -47,7 +47,7 @@ app.get("/", function (req, res) {
   res.sendFile("dist/index.html");
 });
 
-const ctr = new Controller(0.25, 0.01, 0.01, 1);
+const ctr = new Controller(0.8, 0.8, 0, 1);
 ctr.setTarget(500);
 
 let light = {
@@ -56,6 +56,15 @@ let light = {
   currentSettings: 10,
   maxPower: 255,
   targetIlluminance: 500,
+};
+
+let data = {
+  light: 1,
+  power: 0,
+  red: 255,
+  green: 255,
+  blue: 255,
+  white: 255,
 };
 
 let sensors = [
@@ -67,25 +76,16 @@ let sensors = [
 app.post("/sensor", function (req, res) {
   console.log("Incomming POST request: ", req.body);
   const { illumminance } = req.body;
-  let currSensor = sensors.find((sensor) => sensor.ip === req.body.sensor);
-  currSensor.meassures.unshift(illumminance);
-
   if (
     illumminance / light.targetIlluminance > 1.03 ||
-    illumminance / light.targetIlluminance < 0.97
+    illumminance / light.targetIlluminance < 0.99
   ) {
-    if (currSensor.meassures.length > 15) {
-      getNewPowerValue(currSensor, light).then((data) =>
-        setPower(`http://192.168.1.18:80/color`, {
-          light: 1,
-          power: data,
-          red: 255,
-          green: 255,
-          blue: 255,
-          white: 255,
-        })
-      );
-    }
+    getNewPowerValue(illumminance, light.currentSettings).then((newPower) =>
+      setPower(`http://192.168.1.18:80/color`, {
+        ...data,
+        ...(data.power = newPower),
+      })
+    );
   }
   res.status(200).send("OK");
 });
@@ -108,31 +108,32 @@ const setColor = async (url = "", data) => {
   }
 };
 
-const correlationCal = (currSensor, light) => {
-  let sorted = currSensor.meassures.sort((a, b) => a - b);
-  let sum = sorted.slice(5, 15).reduce((a, b) => a + b, 0);
-  let avg = sum / 10 || 0;
-
-  let input = ctr.update(avg);
-  currSensor.meassures.splice(0, 15);
-  console.log("CORRELATION INPUT: ", input);
-  let newData = adjustPower(input, light.currentSettings);
-  return newData;
+const getCorrelation = async (illuminance) => {
+  let correlation = ctr.update(illuminance);
+  return correlation;
 };
 
-const adjustPower = (correlation, currentPower) => {
-  console.log("ADJUSTMENT: ", (currentPower * correlation) / 100);
-  let newValue = currentPower + (currentPower * correlation) / 100;
+const adjustPower = async (correlation, currentPower) => {
+  let newValue = Math.round(currentPower + (currentPower * correlation) / 100);
   console.log("OLD VALUE: ", currentPower);
-  light.currentSettings = newValue;
-  console.log("NEW VALUE: ", light.currentSettings);
-
-  return newValue;
+  console.log("NEW VALUE: ", newValue);
+  if (newValue >= 255) {
+    light.currentSettings = 255;
+    return 255;
+  } else if (newValue < 0) {
+    light.currentSettings = 0;
+    return 0;
+  } else {
+    return newValue;
+  }
 };
 
-const getNewPowerValue = async (currSensor, light) => {
-  let newPower = await correlationCal(currSensor, light);
-  return newPower;
+const getNewPowerValue = async (illuminance, light) => {
+  const newValue = await getCorrelation(illuminance).then((correlation) =>
+    adjustPower(correlation, light)
+  );
+  console.log("VALUE FROM PROM: ", newValue);
+  return newValue;
 };
 
 const setPower = async (url = "", data) => {
