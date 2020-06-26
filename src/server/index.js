@@ -49,24 +49,6 @@ app.get("/", function (req, res) {
   res.sendFile("dist/index.html");
 });
 
-let interval;
-
-io.on("connection", (socket) => {
-  console.log("New client connected");
-  if (interval) {
-    clearInterval();
-  }
-  interval = setInterval(() => getApiAndEmit(socket), 1000);
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-    clearInterval(interval);
-  });
-});
-
-const getApiAndEmit = (socket) => {
-  const response = new Date();
-  socket.emit("FromAPI", response);
-};
 
 //Dummy Data
 
@@ -92,7 +74,7 @@ let sensors = [
   { ip: "192.168.1.16", meassures: [] },
 ];
 
-require("./routes/controlRoutes")(app, light, data);
+require("./routes/controlRoutes")(app, light, data, io);
 
 //Helper function to format coordinates to needed format
 //2 minuty collecting

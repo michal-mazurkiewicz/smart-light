@@ -5,8 +5,12 @@ let target = 500;
 ctr.setTarget(target);
 
 let mode = "AUTO";
-
-module.exports = (app, light, data) => {
+let socketData = {
+  timeStamp:"",
+  illuminance:"",
+  lightPower:"",
+}
+module.exports = (app, light, data, io) => {
 
   app.post("/color", function (req, res) {
     setColor("http://192.168.1.18:80/color", req.body).then(function () {
@@ -71,6 +75,24 @@ module.exports = (app, light, data) => {
 
   })
 
+  let interval;
+
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  if (interval) {
+    clearInterval();
+  }
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    clearInterval(interval);
+  });
+});
+
+const getApiAndEmit = (socket) => {
+  socketData.timeStamp = Date.now();
+  socket.emit("FromAPI", socketData);
+};
 };
 
 //Helper functions:
@@ -117,7 +139,8 @@ const getNewPowerValue = async (illuminance, light) => {
   const newValue = await getCorrelation(illuminance).then((correlation) =>
     adjustPower(correlation, light)
   );
-  console.log("VALUE FROM PROM: ", newValue);
+  socketData.lightPower = newValue;
+  socketData.illuminance = illuminance;
   return newValue;
 };
 
@@ -139,10 +162,6 @@ const setPower = async (url = "", data) => {
 
 //socket data:
 
-socketData = {
-  timeStamp: "",
-  illuminance: "",
-  lightPower: "",
-}
+
 
 

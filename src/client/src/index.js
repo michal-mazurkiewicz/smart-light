@@ -7,6 +7,9 @@ import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import reducers from './reducers';
 import middleware from './middleware'
+import "chartist"
+import "../node_modules/chartist/dist/chartist.min.js"
+import "../node_modules/chartist/dist/scss/chartist.scss"
 
 const store = createStore(reducers, {}, middleware);
 
