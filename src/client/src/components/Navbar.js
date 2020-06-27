@@ -42,7 +42,7 @@ class Navbar extends Component {
 
   render() {
     return (
-      <nav>
+      <nav className="light-blue darken-3">
         <div className="nav-wrapper">
           <Link to={this.props.authUser ? '/dashboard' : '/'} className="brand-logo right">
             Smart Light

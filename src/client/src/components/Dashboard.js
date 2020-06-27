@@ -5,6 +5,8 @@ import ChartistGraph from "react-chartist";
 
 const ENDPOINT = "http://localhost:8000";
 
+
+
 function Dashboard() {
   const [response, setResponse] = useState("");
   const [feed, setFeed] = useState({
@@ -26,6 +28,12 @@ function Dashboard() {
     return () => socket.disconnect();
   }, []);
 
+  const milisecondsToDate = (miliseconds) => {
+    const date = new Date(miliseconds)
+    return date.toLocaleTimeString();
+  }
+
+
   var options = {
     high: 700,
     low: 0,
@@ -46,7 +54,7 @@ function Dashboard() {
     <div>
       <ChartistGraph data={feed} options={options} type={type} />
       <p>
-        socketData: <p>{response.timeStamp}</p>
+        socketData: <p>{milisecondsToDate(response.timeStamp)}</p>
         <p>{response.illuminance}</p>
         <p>{response.lightPower}</p>
       </p>

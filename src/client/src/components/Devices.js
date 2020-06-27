@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/devices.css";
+import { Link } from "react-router-dom";
 const Devices = () => (
   <div className="devices">
     <h2>Your Devices: </h2>
@@ -45,7 +46,7 @@ const Devices = () => (
         </tr>
       </tbody>
     </table>
-    <button>Add Device</button>
+    <Link to={'addDevice'} class="btn-floating btn-large waves-effect light-blue darken-1"><i class="material-icons">+</i></Link>
   </div>
 );
 
