@@ -6,6 +6,11 @@
 }
 
 .colorPicker{
-    height: 100px;
-    width: 100px;
+    height: 50px;
+    width: 70px;
+    margin-bottom: 5px;
+}
+.powerPicker{
+    width: 150px;
+    background-color: rgb(145, 187, 241);
 }

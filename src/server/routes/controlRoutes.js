@@ -77,7 +77,7 @@ const getApiAndEmit = (socket) => {
 };
 
 const changeSettings = async (url = "", data) => {
-  console.log("SOCKET ON CHANGE SETTINGS: ", data)
+  setSettings(data);
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -95,14 +95,16 @@ const changeSettings = async (url = "", data) => {
 
 const setSettings = (settings) => {
   const { light, power, red, green, blue, white } = settings;
+  console.log("SETTINGS: ", power)
   data = {
     light: light ? light : data.light,
     power: power ? power : data.power,
     red: red ? red : data.red,
     green: green ? green : data.green,
     blue: blue ? blue : data.blue,
-    white: white ? white : data.white,
+    white: white ? white : data.white
   };
+  socketData = {...socketData, lightPower: power}
   return data;
 };
 
