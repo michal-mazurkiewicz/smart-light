@@ -1,14 +1,9 @@
 import React, { Component } from "react";
 import '../styles/controller.css'
-class Controller extends Component{
-
-    state = {
-        power: 0
-    }
+function Controller(){
 
 
 
-    render(){
        return(
             <div className="container">
               <h2>Pick Color:</h2>
@@ -21,7 +16,6 @@ class Controller extends Component{
               </div>
             </div>
           );
-    }
 }
 
 export default Controller;
