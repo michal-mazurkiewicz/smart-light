@@ -9,11 +9,7 @@ class Navbar extends Component {
       case null:
         return;
       case false:
-        return (
-          <ul id="nav-mobile" className="left hide-on-med-and-down">
-
-          </ul>
-        );
+        return <ul id="nav-mobile" className="left hide-on-med-and-down"></ul>;
       default:
         return (
           <ul id="nav-mobile" className="left hide-on-med-and-down">
@@ -24,10 +20,10 @@ class Navbar extends Component {
               <a href="/dashboard">Dashboard</a>
             </li>
             <li>
-              <Link to={'/controller'}>Controller</Link>
+              <Link to={"/controller"}>Controller</Link>
             </li>
             <li>
-              <Link to={'/devices'}>Devices</Link>
+              <Link to={"/devices"}>Devices</Link>
             </li>
             <li>
               <span>Hello, {authUser.name}</span>
@@ -44,7 +40,10 @@ class Navbar extends Component {
     return (
       <nav className="light-blue darken-3">
         <div className="nav-wrapper">
-          <Link to={this.props.authUser ? '/dashboard' : '/'} className="brand-logo right">
+          <Link
+            to={this.props.authUser ? "/dashboard" : "/"}
+            className="brand-logo right"
+          >
             Smart Light
           </Link>
           {this.renderContent()}

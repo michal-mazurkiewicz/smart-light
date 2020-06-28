@@ -50,31 +50,12 @@ app.get("/", function (req, res) {
 });
 
 
-//Dummy Data
-
-let light = {
-  device: "192.168.1.18",
-  port: "80",
-  currentSettings: 10,
-  maxPower: 255,
-  targetIlluminance: 500,
-};
-
-let data = {
-  light: 1,
-  power: 0,
-  red: 255,
-  green: 255,
-  blue: 255,
-  white: 255,
-};
-
 let sensors = [
   { ip: "192.168.1.14", meassures: [] },
   { ip: "192.168.1.16", meassures: [] },
 ];
 
-require("./routes/controlRoutes")(app, light, data, io);
+require("./routes/controlRoutes")(app, io);
 
 //Helper function to format coordinates to needed format
 //2 minuty collecting

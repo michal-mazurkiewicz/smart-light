@@ -1,16 +1,34 @@
 const fetch = require("node-fetch");
 const Controller = require("node-pid-controller");
-const ctr = new Controller(0.25, 0.015, 0, 1);
+const ctr = new Controller(0.25, 0.1, 0, 1);
 let target = 500;
 ctr.setTarget(target);
 
 let mode = "AUTO";
+
+let lightData = {
+  device: "192.168.1.18",
+  port: "80",
+  currentSettings: 10,
+  maxPower: 255,
+  targetIlluminance: 500,
+};
+
+let data = {
+  light: 1,
+  power: 0,
+  red: 255,
+  green: 255,
+  blue: 255,
+  white: 255,
+};
+
 let socketData = {
   timeStamp:"",
   illuminance:"",
   lightPower:"",
 }
-module.exports = (app, light, data, io) => {
+module.exports = (app, io) => {
 
   app.post("/color", function (req, res) {
     setColor("http://192.168.1.18:80/color", req.body).then(function () {
@@ -50,16 +68,17 @@ module.exports = (app, light, data, io) => {
   app.post("/sensor", function (req, res) {
     console.log("Incomming POST request: ", req.body);
     const { illumminance } = req.body;
-
+    socketData = {...socketData, illuminance: illumminance}
+    socketData = {...socketData, lightPower: lightData.currentSettings}
     if (mode === "AUTO") {
       if (
-        illumminance / light.targetIlluminance > 1.03 ||
-        illumminance / light.targetIlluminance < 1
+        illumminance / lightData.targetIlluminance > 1.03 ||
+        illumminance / lightData.targetIlluminance <= 1
       ) {
-        getNewPowerValue(illumminance, light).then((newPower) =>
+        getNewPowerValue(illumminance, lightData).then((newPower) =>
           setPower(`http://192.168.1.18:80/color`, {
             ...data,
-            ...(data.power = newPower),
+            power: newPower,
           })
         );
       }
@@ -90,7 +109,7 @@ io.on("connection", (socket) => {
 });
 
 const getApiAndEmit = (socket) => {
-  socketData.timeStamp = Date.now();
+  socketData.timeStamp = new Date().toLocaleTimeString();
   socket.emit("FromAPI", socketData);
 };
 };
@@ -122,15 +141,14 @@ const getCorrelation = async (illuminance) => {
 const adjustPower = async (correlation, light) => {
   let newValue = Math.round(light.currentSettings + (light.currentSettings * correlation) / 100);
   console.log("OLD VALUE: ", light.currentSettings);
-  console.log("NEW VALUE: ", newValue);
   if (newValue >= 255) {
-    light.currentSettings = 255;
+    lightData ={...lightData, currentSettings : 255};
     return 255;
   } else if (newValue < 0) {
-    light.currentSettings = 1;
+    lightData ={...lightData, lightPower: 1};
     return 0;
   } else {
-    light.currentSettings = newValue;
+    lightData ={...lightData, currentSettings: newValue};
     return newValue;
   }
 };
@@ -139,8 +157,6 @@ const getNewPowerValue = async (illuminance, light) => {
   const newValue = await getCorrelation(illuminance).then((correlation) =>
     adjustPower(correlation, light)
   );
-  socketData.lightPower = newValue;
-  socketData.illuminance = illuminance;
   return newValue;
 };
 
@@ -159,9 +175,3 @@ const setPower = async (url = "", data) => {
     console.log("Change Color Error: ", error);
   }
 };
-
-//socket data:
-
-
-
-

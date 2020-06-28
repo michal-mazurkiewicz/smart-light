@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import M from "materialize-css";
 import "../styles/landing.css"
+import { connect } from "react-redux";
 
 
 class Landing extends Component {
@@ -10,7 +11,7 @@ class Landing extends Component {
       M.Carousel.init(elems, {});
     });
   }
-  
+
   render() {
     return (
       <div class="landingContainer">
@@ -27,10 +28,15 @@ class Landing extends Component {
             <img src="https://botland.com.pl/58777-large_default/czujnik-natezenia-swiatla-bh1750.jpg" />
           </div>
         </div>
-        <a href="/auth/google"><div className="signin"></div></a>
+        {this.props.authUser ? "" :<a href="/auth/google"><div className="signin"></div></a> }
+
        </div>
     );
   }
 }
 
-export default Landing;
+function mapStateToProps(state) {
+  return { authUser: state.authUser };
+}
+
+export default connect(mapStateToProps)(Landing);
