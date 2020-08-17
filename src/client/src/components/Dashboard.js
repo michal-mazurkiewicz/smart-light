@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
-import { LineChart, XAxis, YAxis, CartesianGrid, Line } from "recharts";
-
+import {
+  LineChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Line,
+  Tooltip,
+} from "recharts";
+import "../styles/dashboard.css";
 const ENDPOINT = "http://localhost:8000";
 const socket = socketIOClient(ENDPOINT);
 function Dashboard() {
@@ -70,27 +77,20 @@ function Dashboard() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        margin: "20px",
-      }}
-    >
-      <LineChart width={1000} height={300} data={feed}>
-        <XAxis dataKey="timeStamp" />
-        <YAxis />
-        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-        <Line type="monotone" dataKey="illuminance" stroke="#8884d8" />
-        <Line type="monotone" dataKey="lightPower" stroke="#82ca9d" />
-      </LineChart>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
+    <div className="gridContainer">
+      <div className="chart">
+        <div style={{padding:"5px"}}>
+        <h5>Total Consumption:</h5>
+          <LineChart width={800} height={300} data={feed.slice(0, 10)} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+            <YAxis />
+            <Line type="monotone" dataKey="illuminance" stroke="#8884d8" />
+            <Line type="monotone" dataKey="lightPower" stroke="#82ca9d" />
+            <Tooltip />
+          </LineChart>
+        </div>
+      </div>
+
+      <div className="data">
         <div>
           <h5>Current Data:</h5>
           <p>Time: {response.timeStamp}</p>
@@ -98,31 +98,19 @@ function Dashboard() {
           <p>Light Power: {response.lightPower}</p>
           <p>Energy Usage: {Math.round((response.lightPower / 255) * 100)}%</p>
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "strech",
-            marginLeft: "100px",
-          }}
-        >
+      </div>
+      <div className="controls">
         <h5>Control:</h5>
-          <div className="switch">
-            <label>
-              Manual
-              <input type="checkbox" onChange={(e) => onChangeMode(e)} />
-              <span className="lever"></span>
-              Auto
-            </label>
-          </div>
-          {mode === "MANUAL" ? ( <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
+        <div className="switch">
+          <label>
+            Manual
+            <input type="checkbox" onChange={(e) => onChangeMode(e)} />
+            <span className="lever"></span>
+            Auto
+          </label>
+        </div>
+        {mode === "MANUAL" ? (
+          <div>
             <p>
               Red: {data.red} Green: {data.green} Blue: {data.blue} Power:{" "}
               {data.power}
@@ -143,8 +131,10 @@ function Dashboard() {
                 onChange={(e) => changePower(e)}
               />
             </div>
-          </div>):(<p>Atomatic Control</p>)}
-        </div>
+          </div>
+        ) : (
+          <p>Atomatic Control</p>
+        )}
       </div>
     </div>
   );

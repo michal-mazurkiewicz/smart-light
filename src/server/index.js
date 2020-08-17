@@ -19,11 +19,10 @@ http.listen(8000, function () {
   );
 });
 
-//Get:
+//Entry Endpoint:
 app.get("/", function (req, res) {
   res.sendFile("dist/index.html");
 });
 
 //Routing
-
 require("./routes/controlRoutes")(app, io);
