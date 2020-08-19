@@ -1,0 +1,69 @@
+.gridContainer {
+  color: white;
+  font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
+  background-color: rgb(43, 66, 86);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 0.05fr 3fr 3fr;
+}
+
+.chart {
+  border: 3px solid rgb(42, 63, 81);
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 3;
+  place-self: start stretch;
+}
+
+.controls {
+  border: 3px solid rgb(42, 63, 81);
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 4;
+  place-self: center strech;
+}
+
+.data {
+  border: 3px solid rgb(42, 63, 81);
+  padding: 5px;
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  place-self: center strech;
+}
+
+.lightItem {
+  display: flex;
+  height: 70px;
+  border-bottom: 3px solid rgb(42, 63, 81);
+  align-items: center;
+  font-size: 1.4em;
+}
+
+.sensorItem {
+    display: flex;
+    height: 70px;
+    border-bottom: 3px solid rgb(42, 63, 81);
+    align-items: center;
+    font-size: 1.4em;
+  }
+
+.lightsList {
+  padding-top: 20px;
+}
+
+.sensorsList {
+    padding-top: 20px;
+  }
+
+.navBar {
+  background-color: rgb(43, 66, 86);
+  align-items: center;
+  grid-row-start: 0;
+  grid-row-end: 1;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}

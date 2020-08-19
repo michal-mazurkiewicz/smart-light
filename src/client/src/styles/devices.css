@@ -8,3 +8,9 @@
 table{
     width: 50%;
 }
+/**
+<h5>Current Data:</h5>
+          <p>Time: {response.timeStamp}</p>
+          <p>Illuminance: {Math.round(response.illuminance)} lx</p>
+          <p>Light Power: {response.lightPower}</p>
+          <p>Energy Usage: {Math.round((response.lightPower / 255) * 100)}%</p> **/

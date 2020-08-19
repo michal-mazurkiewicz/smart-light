@@ -5,13 +5,8 @@ class Navbar extends Component {
   render() {
     return (
       <nav className="navBar">
-        <div className="nav-wrapper">
-        <ul id="nav-mobile" className="left hide-on-med-and-down">
-            <li>Smart Light</li>
-            <li>
-              <a href="/">Dashboard</a>
-            </li>
-          </ul>
+        <div>
+
         </div>
       </nav>
     );
