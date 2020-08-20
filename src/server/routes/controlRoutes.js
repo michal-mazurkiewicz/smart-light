@@ -33,6 +33,35 @@ let socketData = {
   lightPower: "",
 };
 
+
+
+/**
+ *
+ * Add functionality to handle UI actions
+ *
+ * 1) Light Power Change /setLightPower
+ *
+ * a) Take the value from request
+ * b) Set value in data
+ * c) Print data
+ * d) //Set data to mikrokontroler
+ *
+ * 2) Mode Change /setMode
+ *
+ * a) Take the value from mode request
+ * b) Set mode
+ *
+ * 3) Feed UI with data
+ *
+ * a) Constantly send the data to UI
+ * b) Send feed for illuminance chart
+ *
+ *
+ **/
+
+
+
+
 module.exports = (app, io) => {
 
   //Endpoint For Collecting Sensor Data:
@@ -62,7 +91,9 @@ module.exports = (app, io) => {
     socket.on("changeSettings", (data) =>
       changeSettings(LIGHT_URL, data)
     );
-    socket.on("switchMode", () => switchMode());
+    socket.on("setMode", () => switchMode());
+
+
     socket.on("disconnect", () => {
       console.log("Client disconnected");
       clearInterval(interval);

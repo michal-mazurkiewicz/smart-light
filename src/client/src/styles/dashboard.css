@@ -1,14 +1,14 @@
 .gridContainer {
-  color: white;
   font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
-  background-color: rgb(43, 66, 86);
+  font-weight: bolder;
+  background-color: white;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 0.05fr 3fr 3fr;
 }
 
 .chart {
-  border: 3px solid rgb(42, 63, 81);
+  border: 3px solid silver;
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 2;
@@ -17,7 +17,7 @@
 }
 
 .controls {
-  border: 3px solid rgb(42, 63, 81);
+  border: 3px solid silver;
   grid-column-start: 2;
   grid-column-end: 3;
   grid-row-start: 2;
@@ -26,7 +26,7 @@
 }
 
 .data {
-  border: 3px solid rgb(42, 63, 81);
+  border: 3px solid silver;
   padding: 5px;
   grid-column-start: 1;
   grid-column-end: 2;
@@ -38,15 +38,16 @@
 .lightItem {
   display: flex;
   height: 70px;
-  border-bottom: 3px solid rgb(42, 63, 81);
+  border-bottom: 3px solid silver;
   align-items: center;
   font-size: 1.4em;
+  justify-content: space-evenly;
 }
 
 .sensorItem {
     display: flex;
     height: 70px;
-    border-bottom: 3px solid rgb(42, 63, 81);
+    border-bottom: 3px solid silver;
     align-items: center;
     font-size: 1.4em;
   }
@@ -60,10 +61,20 @@
   }
 
 .navBar {
-  background-color: rgb(43, 66, 86);
+    color: white;
+    font-weight: 900;
+  background-color: skyblue;
   align-items: center;
-  grid-row-start: 0;
-  grid-row-end: 1;
+  grid-row-start: 1;
+  grid-row-end: 2;
   grid-column-start: 1;
   grid-column-end: 3;
+  -webkit-box-shadow: 0px 2px 36px 2px rgba(153,145,153,1);
+-moz-box-shadow: 0px 2px 36px 2px rgba(153,145,153,1);
+box-shadow: 0px 2px 36px 2px rgba(153,145,153,1);
+}
+
+
+.listItemText{
+    color: white;
 }
