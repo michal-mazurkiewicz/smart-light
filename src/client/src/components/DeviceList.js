@@ -3,6 +3,8 @@ import Light from "./Light";
 import Sensor from "./Sensor";
 
 export default function DeviceList(props) {
+
+
   return (
     <>
       {props.mode === "MANUAL" ? (

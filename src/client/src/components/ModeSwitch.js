@@ -1,16 +1,20 @@
 import React from "react";
-
+import BootstrapSwitchButton from "bootstrap-switch-button-react";
 export default function ModeSwitch(props) {
   return (
     <>
       <h5>Controls: {props.mode === "MANUAL" ? "Manual" : "Auto"}</h5>
-      <div className="switch">
-        <label>
-          Manual
-          <input type="checkbox" onChange={(e) => props.changeMode(e)} />
-          <span className="lever"></span>
-          Auto
-        </label>
+      <div>
+        <label style={{paddingRight:"10px"}}>Manual </label>
+        <BootstrapSwitchButton
+          onlabel=" "
+          offlabel=" "
+          onstyle="info"
+          width="200px"
+          checked={props.mode === "MANUAL" ? false : true}
+          onChange={() => props.changeMode()}
+        />
+        <label style={{paddingLeft:"10px"}}>Auto</label>
       </div>
     </>
   );

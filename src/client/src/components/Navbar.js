@@ -1,16 +1,11 @@
-import React, { Component } from "react";
-import '../styles/dashboard.css'
+import React from "react";
 
-class Navbar extends Component {
-  render() {
-    return (
-      <nav className="navBar">
-        <div>
-
-        </div>
-      </nav>
-    );
-  }
+function Navbar() {
+  return (
+    <div className="navBar">
+      <h4 style={{ paddingLeft: "20px" }}>Smart Lights Dashboard</h4>
+    </div>
+  );
 }
 
 export default Navbar;

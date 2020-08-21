@@ -25,4 +25,5 @@ app.get("/", function (req, res) {
 });
 
 //Routing
-require("./routes/controlRoutes")(app, io);
+//require("./routes/controlRoutes")(app, io);
+require("./routes/uiRoutes")(app, io);

@@ -3,9 +3,6 @@ import ReactDOM from "react-dom";
 import "materialize-css/dist/css/materialize.min.css";
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
-import "chartist";
-import "../node_modules/chartist/dist/chartist.min.js";
-import "../node_modules/chartist/dist/scss/chartist.scss";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 

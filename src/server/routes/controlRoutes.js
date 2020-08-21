@@ -10,55 +10,24 @@ const AUTO = "AUTO";
 
 let mode = MANUAL;
 
-let lightData = {
-  device: "192.168.1.18",
-  port: "80",
-  currentSettings: 10,
-  maxPower: 255,
-  targetIlluminance: 500,
-};
-
-let data = {
-  light: 1,
-  power: 10,
-  red: 255,
-  green: 255,
-  blue: 255,
-  white: 255,
-};
-
-let socketData = {
-  timeStamp: "",
-  illuminance: "",
-  lightPower: "",
-};
-
-
-
 /**
- *
  * Add functionality to handle UI actions
  *
  * 1) Light Power Change /setLightPower
  *
- * a) Take the value from request
- * b) Set value in data
- * c) Print data
  * d) //Set data to mikrokontroler
  *
  * 2) Mode Change /setMode
  *
- * a) Take the value from mode request
  * b) Set mode
- *
- * 3) Feed UI with data
- *
- * a) Constantly send the data to UI
- * b) Send feed for illuminance chart
- *
- *
  **/
 
+let sensorData = [
+  { name: "Sensor 1", illuminance: 0 },
+  { name: "Sensor 2", illuminance: 0 },
+  { name: "Sensor 3", illuminance: 0 },
+  { name: "Average", illuminance: 0 },
+];
 
 
 
@@ -68,7 +37,9 @@ module.exports = (app, io) => {
   app.post("/sensor", function (req, res) {
     console.log("Incomming POST request: ", req.body);
     const { illumminance } = req.body;
-    setSockedData(illumminance, data.power);
+    
+    
+
     if (mode === "AUTO") {
       if (isGoalReached(illumminance)) {
         getNewPowerValue(illumminance, data.power).then((newPower) =>
@@ -82,12 +53,6 @@ module.exports = (app, io) => {
   let interval;
   //Websocket:
   io.on("connection", (socket) => {
-    console.log("New client connected");
-    socket.emit("init", data);
-    if (interval) {
-      clearInterval();
-    }
-    interval = setInterval(() => getApiAndEmit(socket), 1000);
     socket.on("changeSettings", (data) =>
       changeSettings(LIGHT_URL, data)
     );
@@ -103,9 +68,7 @@ module.exports = (app, io) => {
 
 //Helper functions:
 
-const getApiAndEmit = (socket) => {
-  socket.emit("FromAPI", socketData);
-};
+
 
 const changeSettings = async (url = "", data) => {
   setSettings(data);
@@ -122,37 +85,6 @@ const changeSettings = async (url = "", data) => {
   } catch (error) {
     console.log("Change Color Error: ", error);
   }
-};
-
-const setSettings = (settings) => {
-  const { light, power, red, green, blue, white } = settings;
-  console.log("SETTINGS: ", power)
-  data = {
-    light: light ? light : data.light,
-    power: power ? power : data.power,
-    red: red ? red : data.red,
-    green: green ? green : data.green,
-    blue: blue ? blue : data.blue,
-    white: white ? white : data.white
-  };
-  socketData = {...socketData, lightPower: power}
-  return data;
-};
-
-const getCorrelation = async (illuminance) => {
-  return ctr.update(illuminance);
-};
-
-const adjustPower = async (correlation, currentPower) => {
-  return Math.abs(
-    Math.round(currentPower + (currentPower * correlation) / 100)
-  );
-};
-
-const getNewPowerValue = async (illuminance, currentPower) => {
-  return await getCorrelation(illuminance).then((correlation) =>
-    adjustPower(correlation, currentPower)
-  );
 };
 
 const setPower = async (url = "", data) => {
@@ -180,21 +112,4 @@ const isGoalReached = (illumminance) => {
   } else {
     return false;
   }
-};
-
-const setSockedData = (illumminance, lightPower) => {
-  socketData = {
-    timeStamp: new Date().toLocaleTimeString(),
-    illuminance: illumminance,
-    lightPower: lightPower,
-  };
-};
-
-const switchMode = () => {
-  if(mode === "MANUAL"){
-    mode = AUTO
-  }else {
-    mode = MANUAL
-  }
-  console.log("Mode Switched to: ", mode)
 };

@@ -1,30 +1,45 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "../styles/dashboard.css";
-import { lightData, sensorData, illuminanceData } from "../utils/data";
-
+import Loader from "react-loader-spinner";
 import ModeSwitch from "./ModeSwitch";
 import UsageChart from "./UsageChart";
 import TotalUsageChart from "./TotalUsageChart";
 import DeviceList from "./DeviceList";
+import Navbar from "./Navbar";
 
 const ENDPOINT = "http://localhost:8000";
 const socket = socketIOClient(ENDPOINT);
 var expected = 500;
 
 function Dashboard() {
-  const [lightsData, setLightData] = useState(lightData);
-  const [mode, setMode] = useState("MANUAL");
-
+  const [lightData, setLightData] = useState([]);
+  const [illuminanceData, setIlluminanceData] = useState([]);
+  const [sensorData, setSensorData] = useState([]);
+  const [mode, setMode] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    socket.on("init", (init) => {
-      console.log("Initial DATA: ", init);
+    setLoading(true);
 
-
+    socket.on("init", (data) => {
+      console.log("Initial DATA: ", data);
+      setLightData(data.lightData);
+      setIlluminanceData(data.illuminanceData);
+      setSensorData(data.sensorData);
+      setMode(data.mode);
+      setLoading(false);
     });
 
-    socket.on("setValue", (data) => {});
+    socket.on("feed", (data) => {
+      console.log("FEED", data);
+      setIlluminanceData(data.illuminanceData);
+      setSensorData(data.sensorData);
+      if (mode === "AUTO") {
+        setLightData(data.lightData);
+        console.log("Light Data: ", data.lightData);
+      }
+    });
 
     return () => socket.disconnect();
   }, []);
@@ -32,46 +47,46 @@ function Dashboard() {
   const changeMode = (e) => {
     if (mode === "MANUAL") {
       setMode("AUTO");
-    } else {
+      socket.emit("changeMode", "AUTO");
+    } else if (mode === "AUTO") {
       setMode("MANUAL");
+      socket.emit("changeMode", "MANUAL");
     }
-    socket.emit("switchMode", mode);
   };
 
   const changePower = (e, light, side) => {
     if (side === "TOP") {
       light.top = Number(e.target.value);
-      setLightData((currentData) => [
-        ...currentData,
-        (currentData[
-          currentData.findIndex((l) => l.name === light.name)
-        ] = light),
-      ]);
-      socket.emit("changePower", lightsData);
+      setLightData((currentData) =>
+        currentData.map((l) => (l.name === light.name ? light : l))
+      );
+      socket.emit("changePower", lightData);
     } else if (side === "BOTTOM") {
       light.bottom = Number(e.target.value);
-      setLightData((currentData) => [
-        ...currentData,
-        (currentData[
-          currentData.findIndex((l) => l.name === light.name)
-        ] = light),
-      ]);
-      socket.emit("changePower", lightsData);
+      setLightData((currentData) =>
+        currentData.map((l) => (l.name === light.name ? light : l))
+      );
+      socket.emit("changePower", lightData);
     }
   };
 
-  return (
+  return loading === true ? (
+    <Loader type="Grid" color="#87CEEB" height="100" width="100" />
+  ) : (
     <div className="gridContainer">
-      <div className="navBar">
-        <h4 style={{ paddingLeft: "20px" }}>Smart Lights Dashboard</h4>
-      </div>
+      <Navbar />
       <TotalUsageChart illuminanceData={illuminanceData} expected={expected} />
       <UsageChart lightData={lightData.slice()} />
 
       <div className="controls">
         <div style={{ padding: "10px" }}>
           <ModeSwitch mode={mode} changeMode={changeMode} />
-          <DeviceList mode={mode} lightData={lightData} sensorData={sensorData} changePower={changePower}/>
+          <DeviceList
+            mode={mode}
+            lightData={lightData}
+            sensorData={sensorData}
+            changePower={changePower}
+          />
         </div>
       </div>
     </div>
