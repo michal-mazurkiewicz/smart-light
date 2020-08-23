@@ -4,7 +4,6 @@ module.exports = (app, io) => {
   let interval;
   //Websocket:
   io.on("connection", (socket) => {
-    console.log("New client connected. Init data: ", db.getFeed());
     socket.emit("init", db.getFeed());
     if (interval) {
       clearInterval();
@@ -18,6 +17,12 @@ module.exports = (app, io) => {
       clearInterval(interval);
     });
   });
+
+  app.post("/sensor", function (req, res) {
+    console.log("Incomming POST request: ", req.body);
+    res.status(200).send("OK");
+  });
+
 };
 
 const sendFeed = (socket) => {
