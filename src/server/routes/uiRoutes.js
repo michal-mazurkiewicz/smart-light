@@ -20,6 +20,7 @@ module.exports = (app, io) => {
 
   app.post("/sensor", function (req, res) {
     console.log("Incomming POST request: ", req.body);
+    db.setSensorData(req.body);
     res.status(200).send("OK");
   });
 
