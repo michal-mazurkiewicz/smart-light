@@ -1,6 +1,7 @@
 //Dependencies
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const ip = require("ip")
 
 //Initialize Server
 const app = require('express')();
@@ -15,7 +16,7 @@ app.use(bodyParser.json());
 //Start Server and listen on port 8000
 http.listen(8000, function () {
   console.log(
-    "Smart Light Mi listening on port 8000! \n You can close it by click Ctrl + c"
+    `Smart Light Mi listening on: ` + ip.address() + `:8000 \n You can close it by click Ctrl + c`
   );
 });
 
