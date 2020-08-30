@@ -84,7 +84,7 @@ function Dashboard() {
           <DeviceList
             mode={mode}
             lightData={lightData}
-            sensorData={sensorData}
+            sensorData={[...sensorData]}
             changePower={changePower}
           />
         </div>

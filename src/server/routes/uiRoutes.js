@@ -1,4 +1,5 @@
 let db = require("../data/models");
+let illuminanceDb = require("../data/Illuminance")
 
 module.exports = (app, io) => {
   let interval;
@@ -20,7 +21,14 @@ module.exports = (app, io) => {
 
   app.post("/sensor", function (req, res) {
     console.log("Incomming POST request: ", req.body);
-    db.setSensorData(req.body);
+    if(db.getMode() === "MANUAL"){
+      db.setSensorData({name: req.body.name, illuminance: Number(req.body.illumminance.toFixed(2))});
+
+    }else if(db.getMode() === "AUTO"){
+      db.setSensorData({name: req.body.name, illuminance: Number(req.body.illumminance.toFixed(2))});
+      let average = illuminanceDb.getRoomIlluminanceAvg(req.body, db.getLightData());
+      db.setIlluminanceData(average);
+    }
     res.status(200).send("OK");
   });
 

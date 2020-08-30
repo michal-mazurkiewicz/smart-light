@@ -1,3 +1,5 @@
+let moment = require("moment")
+
 let lightData = [
   {
     name: "Oprawa 1",
@@ -62,12 +64,15 @@ const setLightData = (data) => {
   lightData = lightData.map((l) => l.name === data.name ? data : l);
 };
 
-const setIlluminanceData = () => {
-  //TODO:
+const setIlluminanceData = (illuminance) => {
+  illuminanceData.push({time: moment().format("HH:mm"), illuminance: illuminance, power: getPowerAverage() })
+  if(illuminanceData.length > 20){
+    illuminanceData.splice(0, 1)
+  }
 };
 
 const setSensorData = (data) => {
-  sensorData = sensorData.map((s) => s.name === data.name ? data : l);
+  sensorData = sensorData.map((s) => s.name === data.name ? data : s);
 };
 
 const changeMode = (data) => {
@@ -82,11 +87,19 @@ const changePower = (data) => {
   console.log("NEw POwer: ", lightData);
 };
 
+const getPowerAverage = () => {
+  let powerAvg = (lightData.reduce((p, n) => p + n.bottom, 0) / lightData.length) / 255
+  return powerAvg * 100;
+}
+
 const getLightData = () => {
   return lightData;
 };
 
 const getIlluminanceData = () => {
+  if(illuminanceData.length > 20){
+    illuminanceData = illuminanceData.slice(illuminanceData.length - 20, illuminanceData.length - 1)
+  }
   return illuminanceData;
 };
 
@@ -108,6 +121,7 @@ module.exports = {
   getIlluminanceData,
   getSensorData,
   setSensorData,
+  setIlluminanceData,
   getMode,
   changePower,
   changeMode,
