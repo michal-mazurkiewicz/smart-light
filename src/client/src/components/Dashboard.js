@@ -18,6 +18,7 @@ function Dashboard() {
   const [sensorData, setSensorData] = useState([]);
   const [mode, setMode] = useState("");
   const [loading, setLoading] = useState(true);
+  const [energyMode, setEnergyMode] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -35,6 +36,7 @@ function Dashboard() {
       console.log("FEED", data);
       setIlluminanceData(data.illuminanceData);
       setSensorData(data.sensorData);
+      setEnergyMode(data.energyMode);
       if (mode === "AUTO") {
         setLightData(data.lightData);
         console.log("Light Data: ", data.lightData);
@@ -54,15 +56,20 @@ function Dashboard() {
     }
   };
 
+  const changeEnergyMode = (value) => {
+    setEnergyMode(value)
+    socket.emit("changeEnergyMode", value)
+  }
+
   const changePower = (e, light, side) => {
     if (side === "TOP") {
-      light.top = Number(e.target.value);
+      light.top = Math.round(Number(e.target.value) * 255 / 100);
       setLightData((currentData) =>
         currentData.map((l) => (l.name === light.name ? light : l))
       );
       socket.emit("changePower", lightData);
     } else if (side === "BOTTOM") {
-      light.bottom = Number(e.target.value);
+      light.bottom = Math.round(Number(e.target.value) * 255 / 100);
       setLightData((currentData) =>
         currentData.map((l) => (l.name === light.name ? light : l))
       );
@@ -85,7 +92,9 @@ function Dashboard() {
             mode={mode}
             lightData={lightData}
             sensorData={[...sensorData]}
+            energyMode={energyMode}
             changePower={changePower}
+            changeEnergyMode={changeEnergyMode}
           />
         </div>
       </div>

@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 const Controller = require("node-pid-controller");
 const ctr = new Controller(0.25, 0.1, 0, 1);
-const LIGHT_URL = "http://192.168.1.18:80/color";
+const LIGHT_URL = "http://192.168.43.166:80/lightLevels";
 let target = 500;
 ctr.setTarget(target);
 

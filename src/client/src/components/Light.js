@@ -15,11 +15,11 @@ export default function Light(props) {
           name="participants"
           min="0"
           max="100"
-          value={props.light.bottom}
+          value={(props.light.bottom / 255 * 100)}
           onChange={(e) => props.changePower(e, light, BOTTOM)}
         />
       </div>
-      <p>{props.light.bottom}%</p>
+      <p>{Math.round(props.light.bottom / 255 * 100)}%</p>
       <div>
         <label>Top:</label>
         <input
@@ -27,11 +27,11 @@ export default function Light(props) {
           name="participants"
           min="0"
           max="100"
-          value={props.light.top}
+          value={props.light.top / 255 * 100}
           onChange={(e) => props.changePower(e, light, TOP)}
         />
       </div>
-      <p>{props.light.top}%</p>
+      <p>{Math.round(props.light.top / 255 * 100)}%</p>
     </li>
   );
 }
