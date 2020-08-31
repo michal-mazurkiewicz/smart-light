@@ -65,24 +65,33 @@ const setLightData = (data) => {
   lightData = lightData.map((l) => l.name === data.name ? data : l);
 };
 
-const setIlluminanceData = (illuminance) => {
-  illuminanceData.push({time: moment().format("HH:mm"), illuminance: illuminance, power: getPowerAverage() })
+const setIlluminanceData = () => {
+  illuminanceData.push({time: moment().format("HH:mm"), illuminance: getIlluminanceAvg(), power: getPowerAverage() })
   if(illuminanceData.length > 20){
     illuminanceData.splice(0, 1)
   }
 };
+
+const getIlluminanceAvg = () => {
+  return sensorData[3].illuminance;
+}
+
+const setIlluminanceAvg = () => {
+  let average = Math.round(sensorData.slice(0, 3).reduce((p, n) => p + n.illuminance, 0) / 3)
+  sensorData[3] = {name: "Average", illuminance: average};
+}
 
 
 const setSensorData = (data) => {
   sensorData = sensorData.map((s) => s.name === data.name ? data : s);
 };
 
-const changeMode = (data) => {
+const setMode = (data) => {
   console.log("Change Mode to: ", data);
   mode = data;
 };
 
-const setEnergyMode = (data) => { 
+const setEnergyMode = (data) => {
   console.log("Change Mode to: ", data);
   energyMode = data;
 }
@@ -91,7 +100,7 @@ const getEnergyMode = () => {
   return energyMode;
 }
 
-const changePower = (data) => {
+const setPower = (data) => {
   console.log("Change Power", data);
   lightData = data;
   console.log("NEw POwer: ", lightData);
@@ -132,9 +141,10 @@ module.exports = {
   getSensorData,
   setSensorData,
   setIlluminanceData,
+  setIlluminanceAvg,
   setEnergyMode,
   getEnergyMode,
   getMode,
-  changePower,
-  changeMode,
+  setPower,
+  setMode,
 };

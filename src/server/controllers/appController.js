@@ -1,7 +1,12 @@
-let db = require("../data/models");
-let illuminanceDb = require("../data/Illuminance")
+let db = require("../data/repository");
+let manualLightService = require("../service/manualLightService");
+let automaticLightService = require("../service/automaticLightService")
 const fetch = require("node-fetch");
 const LIGHT_URL = "http://192.168.43.166:80/lightLevels";
+
+let controller1 = new ctr1({k_p: 1, k_d: 0.25})
+let controller2 = new ctr1({k_p: 1, k_d: 0.25})
+let controller3 = new ctr1({k_p: 1, k_d: 0.25})
 
 module.exports = (app, io) => {
   let interval;
@@ -23,14 +28,18 @@ module.exports = (app, io) => {
 
   app.post("/sensor", function (req, res) {
     console.log("Incomming POST request: ", req.body);
-      
+    if(db.getMode() === "MANUAL"){
+      manualLightService.performManualLighting(req.body)
+    }else{
+      automaticLightService.performAuthomaticLight(req.body)
+    }
     res.status(200).send("OK");
   });
 
 };
 
 const sendNewPower = async (url, data) => {
-  db.changePower(data)
+  db.setPower(data)
   console.log("SEND NNEW POWER DATA: ", data)
   const response = await fetch(url, {
     method: "POST",
