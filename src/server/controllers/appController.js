@@ -4,10 +4,6 @@ let automaticLightService = require("../service/automaticLightService")
 const fetch = require("node-fetch");
 const LIGHT_URL = "http://192.168.43.166:80/lightLevels";
 
-let controller1 = new ctr1({k_p: 1, k_d: 0.25})
-let controller2 = new ctr1({k_p: 1, k_d: 0.25})
-let controller3 = new ctr1({k_p: 1, k_d: 0.25})
-
 module.exports = (app, io) => {
   let interval;
   //Websocket:
@@ -29,9 +25,10 @@ module.exports = (app, io) => {
   app.post("/sensor", function (req, res) {
     console.log("Incomming POST request: ", req.body);
     if(db.getMode() === "MANUAL"){
-      manualLightService.performManualLighting(req.body)
+      manualLightService.performManualLighting({name: req.body.name, illuminance: req.body.illumminance})
     }else{
-      automaticLightService.performAuthomaticLight(req.body)
+      let data = automaticLightService.performAuthomaticLight({name: req.body.name, illuminance: req.body.illumminance})
+      sendNewPower(LIGHT_URL, data).catch(e => console.log(e));
     }
     res.status(200).send("OK");
   });

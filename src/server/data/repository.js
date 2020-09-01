@@ -58,7 +58,7 @@ let illuminanceData = [
   },
 ];
 
-let mode = "AUTO";
+let mode = "MANUAL";
 let energyMode = "SAVE";
 
 const setLightData = (data) => {
@@ -137,6 +137,7 @@ const getFeed = () => {
 module.exports = {
   getFeed,
   getLightData,
+  setLightData,
   getIlluminanceData,
   getSensorData,
   setSensorData,
