@@ -17,7 +17,7 @@ export default function DeviceList(props) {
       ) : (
         <div>
           <div style={{paddingTop:"15px"}}>
-            <RadioGroup value={props.energyMode} onChange={(value) => props.changeEnergyMode(value)} horizontal>
+            <RadioGroup value={props.strategy} onChange={(value) => props.changeStrategy(value)} horizontal>
               <RadioButton value="SAVE">Oszczedzanie Energii</RadioButton>
               <RadioButton value="FEEL">Przyjemny Nastroj</RadioButton>
               <RadioButton value="HYBRID">Tryb Hybrydowy</RadioButton>

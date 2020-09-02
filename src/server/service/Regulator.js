@@ -1,5 +1,5 @@
-const repo = require("../data/repository");
 const Controller = require("node-pid-controller");
+const { setTarget } = require("../data/repository");
 const maxSaturation = 255;
 const minSaturation = 0;
 
@@ -8,12 +8,11 @@ class Regulator {
     this.illuminanceController = new Controller(0.15, 0.1, 0.1, 1);
     this.lightTopController = new Controller(0.15, 0.1, 0.1, 1);
     this.lightBottomController = new Controller(0.15, 0.1, 0.1, 1);
-    this.illuminanceTarget = new Controller(0.15, 0.1, 0.1, 1);
     this.bottomPriorityStrategy = new BottomPriorityStrategy();
     this.topPriorityStrategy = new TopPriorityStrategy();
     this.equalPriorityStrategy = new EqualPriorityStrategy();
-    this.target = target;
     this.strategy = strategy;
+    setTarget(target);
   }
 
   setTarget(target) {

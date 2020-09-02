@@ -59,7 +59,7 @@ let illuminanceData = [
 ];
 
 let mode = "MANUAL";
-let energyMode = "SAVE";
+let strategy = "SAVE";
 let target = "500";
 
 const setLightData = (data) => {
@@ -93,12 +93,11 @@ const setMode = (data) => {
 };
 
 const setStrategy = (data) => {
-  console.log("Change Mode to: ", data);
-  energyMode = data;
+  strategy = data;
 }
 
 const getStrategy = () => {
-  return energyMode;
+  return strategy;
 }
 
 const setPower = (data) => {
@@ -130,7 +129,7 @@ const getMode = () => {
 };
 
 const getFeed = () => {
-  return {lightData, illuminanceData, sensorData, mode, energyMode, target};
+  return {lightData, illuminanceData, sensorData, mode, strategy, target};
 };
 
 const setTarget = (data) => {

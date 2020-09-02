@@ -18,7 +18,7 @@ function Dashboard() {
   const [sensorData, setSensorData] = useState([]);
   const [mode, setMode] = useState("");
   const [loading, setLoading] = useState(true);
-  const [energyMode, setEnergyMode] = useState("");
+  const [strategy, setStrategy] = useState("");
   const [target, setTarget] = useState("");
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function Dashboard() {
       console.log("FEED", data);
       setIlluminanceData(data.illuminanceData);
       setSensorData(data.sensorData);
-      setEnergyMode(data.energyMode);
+      setStrategy(data.strategy);
       setLightData(data.lightData);
       setTarget(data.target);
 
@@ -56,9 +56,9 @@ function Dashboard() {
     }
   };
 
-  const changeEnergyMode = (value) => {
-    setEnergyMode(value);
-    socket.emit("changeEnergyMode", value);
+  const changeStrategy = (value) => {
+    setStrategy(value);
+    socket.emit("changeStrategy", value);
   };
 
   const changeTarget = (value) => {
@@ -97,11 +97,11 @@ function Dashboard() {
             mode={mode}
             lightData={lightData}
             sensorData={[...sensorData]}
-            energyMode={energyMode}
+            strategy={strategy}
             target={target}
             changeTarget={changeTarget}
             changePower={changePower}
-            changeEnergyMode={changeEnergyMode}
+            changeStrategy={changeStrategy}
           />
         </div>
       </div>
