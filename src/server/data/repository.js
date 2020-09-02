@@ -92,12 +92,12 @@ const setMode = (data) => {
   mode = data;
 };
 
-const setEnergyMode = (data) => {
+const setStrategy = (data) => {
   console.log("Change Mode to: ", data);
   energyMode = data;
 }
 
-const getEnergyMode = () => {
+const getStrategy = () => {
   return energyMode;
 }
 
@@ -152,8 +152,8 @@ module.exports = {
   setSensorData,
   setIlluminanceData,
   setIlluminanceAvg,
-  setEnergyMode,
-  getEnergyMode,
+  setStrategy,
+  getStrategy,
   getMode,
   setPower,
   setMode,

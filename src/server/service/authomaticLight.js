@@ -1,155 +1,46 @@
-const maxSaturation = 255;
-const minSaturation = 0;
+const Regulator = require("./Regulator");
+const repository = require("../data/repository");
 
 class AuthomaticLight {
-  constructor(strategy) {
-    this.strategy = strategy;
+  constructor() {
+    this.sensorOneRegulator = new Regulator();
+    this.sensorTwoRegulator = new Regulator();
+    this.sensorThreeRegulator = new Regulator();
   }
 
   setStrategy(strategy) {
-    this.strategy = strategy;
-  }
-
-  calculateNewLightPowerValues(sensor, light) {
-    return this.strategy.calculateNewLightValues(sensor, light);
-  }
-}
-
-class SavingStrategy {
-  constructor(regulator1, regulator2, regulator3) {
-    this.sensorOneRegulator = regulator1;
-    this.sensorTwoRegulator = regulator2;
-    this.sensorThreeRegulator = regulator3;
+    this.sensorOneRegulator.setStrategy(strategy);
+    this.sensorTwoRegulator.setStrategy(strategy);
+    this.sensorThreeRegulator.setStrategy(strategy);
+    repository.setStrategy(strategy)
   }
 
   calculateNewLightPowerValues(sensor, light) {
     switch (sensor.name) {
       case "Sensor 1":
-        let newValue = this.sensorOneRegulator.getNewLightPowerValue(sensor);
-        let bottom = filterValue(newValue);
-        let top = filterValue(newValue - 255);
-
-        this.sensorOneRegulator.lightBottomController.setTarget(bottom);
-        this.sensorOneRegulator.lightTopController.setTarget(top);
-
-        return {bottom: getNewValue(light.bottom, this.sensorOneRegulator.lightBottomController), top: getNewValue(light.top, this.sensorOneRegulator.lightTopController)}
+        let newValues = this.sensorOneRegulator.getNewLightBottomTopPowerValues(
+          sensor.illuminance,
+          light.top,
+          light.bottom
+        );
+        return;
       case "Sensor 2":
-        let newValue = this.sensorTwoRegulator.getNewLightPowerValue(sensor);
-        let bottom = filterValue(newValue);
-        let top = filterValue(newValue - 255);
-
-        this.sensorTwoRegulator.lightBottomController.setTarget(bottom);
-        this.sensorTwoRegulator.lightTopController.setTarget(top);
-
-        return {bottom: getNewValue(light.bottom, this.sensorTwoRegulator.lightBottomController), top: getNewValue(light.top, this.sensorTwoRegulator.lightTopController)}
+        let newValues = this.sensorTwoRegulator.getNewLightBottomTopPowerValues(
+          sensor.illuminance,
+          light.top,
+          light.bottom
+        );
       case "Sensor 3":
-        let newValue = this.sensorThreeRegulator.getNewLightPowerValue(sensor);
-        let bottom = filterValue(newValue);
-        let top = filterValue(newValue - 255);
+        let newValues = this.sensorThreeRegulator.getNewLightBottomTopPowerValues(
+          sensor.illuminance,
+          light.top,
+          light.bottom
+        );
 
-        this.sensorThreeRegulator.lightBottomController.setTarget(bottom);
-        this.sensorThreeRegulator.lightTopController.setTarget(top);
-
-        return {bottom: getNewValue(light.bottom, this.sensorThreeRegulator.lightBottomController), top: getNewValue(light.top, this.sensorThreeRegulator.lightTopController)}
       default:
-        break;
+        return;
     }
   }
 }
 
-class FeelingStrategy {
-    constructor(regulator1, regulator2, regulator3) {
-        this.sensorOneRegulator = regulator1;
-        this.sensorTwoRegulator = regulator2;
-        this.sensorThreeRegulator = regulator3;
-      }
-
-      calculateNewLightPowerValues(sensor, light) {
-        switch (sensor.name) {
-          case "Sensor 1":
-            let newValue = this.sensorOneRegulator.getNewLightPowerValue(sensor);
-            let top = filterValue(newValue);
-            let bottom = filterValue(newValue - 255);
-
-            this.sensorOneRegulator.lightBottomController.setTarget(bottom);
-            this.sensorOneRegulator.lightTopController.setTarget(top);
-
-            return {bottom: getNewValue(light.bottom, this.sensorOneRegulator.lightBottomController), top: getNewValue(light.top, this.sensorOneRegulator.lightTopController)}
-          case "Sensor 2":
-            let newValue = this.sensorTwoRegulator.getNewLightPowerValue(sensor);
-            let top = filterValue(newValue);
-            let bottom = filterValue(newValue - 255);
-
-            this.sensorTwoRegulator.lightBottomController.setTarget(bottom);
-            this.sensorTwoRegulator.lightTopController.setTarget(top);
-
-            return {bottom: getNewValue(light.bottom, this.sensorTwoRegulator.lightBottomController), top: getNewValue(light.top, this.sensorTwoRegulator.lightTopController)}
-          case "Sensor 3":
-            let newValue = this.sensorThreeRegulator.getNewLightPowerValue(sensor);
-            let top = filterValue(newValue);
-            let bottom = filterValue(newValue - 255);
-
-            this.sensorThreeRegulator.lightBottomController.setTarget(bottom);
-            this.sensorThreeRegulator.lightTopController.setTarget(top);
-
-            return {bottom: getNewValue(light.bottom, this.sensorThreeRegulator.lightBottomController), top: getNewValue(light.top, this.sensorThreeRegulator.lightTopController)}
-          default:
-            break;
-        }
-      }
-}
-
-class HybridStrategy {
-    constructor(regulator1, regulator2, regulator3) {
-        this.sensorOneRegulator = regulator1;
-        this.sensorTwoRegulator = regulator2;
-        this.sensorThreeRegulator = regulator3;
-      }
-
-      calculateNewLightPowerValues(sensor, light) {
-        switch (sensor.name) {
-          case "Sensor 1":
-            let newValue = this.sensorOneRegulator.getNewLightPowerValue(sensor);
-            let bottom = filterValue(newValue / 2);
-            let top = filterValue(newValue / 2);
-
-            this.sensorOneRegulator.lightBottomController.setTarget(bottom);
-            this.sensorOneRegulator.lightTopController.setTarget(top);
-
-            return {bottom: getNewValue(light.bottom, this.sensorOneRegulator.lightBottomController), top: getNewValue(light.top, this.sensorOneRegulator.lightTopController)}
-          case "Sensor 2":
-            let newValue = this.sensorTwoRegulator.getNewLightPowerValue(sensor);
-            let bottom = filterValue(newValue / 2);
-            let top = filterValue(newValue / 2);
-
-            this.sensorTwoRegulator.lightBottomController.setTarget(bottom);
-            this.sensorTwoRegulator.lightTopController.setTarget(top);
-
-            return {bottom: getNewValue(light.bottom, this.sensorTwoRegulator.lightBottomController), top: getNewValue(light.top, this.sensorTwoRegulator.lightTopController)}
-          case "Sensor 3":
-            let newValue = this.sensorThreeRegulator.getNewLightPowerValue(sensor);
-            let bottom = filterValue(newValue / 2);
-            let top = filterValue(newValue / 2);
-
-            this.sensorThreeRegulator.lightBottomController.setTarget(bottom);
-            this.sensorThreeRegulator.lightTopController.setTarget(top);
-
-            return {bottom: getNewValue(light.bottom, this.sensorThreeRegulator.lightBottomController), top: getNewValue(light.top, this.sensorThreeRegulator.lightTopController)}
-          default:
-            break;
-        }
-      }
-}
-
-const filterValue = (value) => {
-  if (value < minSaturation) {
-    return minSaturation;
-  } else if (value > maxSaturation) {
-    return maxSaturation;
-  }
-  return value;
-};
-
-const getNewValue = (oldValue, controller) => {
-    return filterValue(Math.round(controller.update(oldValue)));
-  };
+module.exports = AuthomaticLight
