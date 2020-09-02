@@ -19,6 +19,7 @@ function Dashboard() {
   const [mode, setMode] = useState("");
   const [loading, setLoading] = useState(true);
   const [energyMode, setEnergyMode] = useState("");
+  const [target, setTarget] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -37,10 +38,9 @@ function Dashboard() {
       setIlluminanceData(data.illuminanceData);
       setSensorData(data.sensorData);
       setEnergyMode(data.energyMode);
-      if (mode === "AUTO") {
-        setLightData(data.lightData);
-        console.log("Light Data: ", data.lightData);
-      }
+      setLightData(data.lightData);
+      setTarget(data.target);
+
     });
 
     return () => socket.disconnect();
@@ -57,19 +57,24 @@ function Dashboard() {
   };
 
   const changeEnergyMode = (value) => {
-    setEnergyMode(value)
-    socket.emit("changeEnergyMode", value)
-  }
+    setEnergyMode(value);
+    socket.emit("changeEnergyMode", value);
+  };
+
+  const changeTarget = (value) => {
+    setTarget(value);
+    socket.emit("changeTarget", value);
+  };
 
   const changePower = (e, light, side) => {
     if (side === "TOP") {
-      light.top = Math.round(Number(e.target.value) * 255 / 100);
+      light.top = Math.round((Number(e.target.value) * 255) / 100);
       setLightData((currentData) =>
         currentData.map((l) => (l.name === light.name ? light : l))
       );
       socket.emit("changePower", lightData);
     } else if (side === "BOTTOM") {
-      light.bottom = Math.round(Number(e.target.value) * 255 / 100);
+      light.bottom = Math.round((Number(e.target.value) * 255) / 100);
       setLightData((currentData) =>
         currentData.map((l) => (l.name === light.name ? light : l))
       );
@@ -82,8 +87,8 @@ function Dashboard() {
   ) : (
     <div className="gridContainer">
       <Navbar />
-      <TotalUsageChart illuminanceData={illuminanceData} expected={expected} />
-      <UsageChart lightData={lightData.slice()} />
+      <TotalUsageChart illuminanceData={illuminanceData} target={target} expected={expected} />
+      <UsageChart lightData={lightData} />
 
       <div className="controls">
         <div style={{ padding: "10px" }}>
@@ -93,6 +98,8 @@ function Dashboard() {
             lightData={lightData}
             sensorData={[...sensorData]}
             energyMode={energyMode}
+            target={target}
+            changeTarget={changeTarget}
             changePower={changePower}
             changeEnergyMode={changeEnergyMode}
           />

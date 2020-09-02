@@ -60,6 +60,7 @@ let illuminanceData = [
 
 let mode = "MANUAL";
 let energyMode = "SAVE";
+let target = "500";
 
 const setLightData = (data) => {
   lightData = lightData.map((l) => l.name === data.name ? data : l);
@@ -101,9 +102,7 @@ const getEnergyMode = () => {
 }
 
 const setPower = (data) => {
-  console.log("Change Power", data);
   lightData = data;
-  console.log("NEw POwer: ", lightData);
 };
 
 const getPowerAverage = () => {
@@ -131,11 +130,21 @@ const getMode = () => {
 };
 
 const getFeed = () => {
-  return {lightData, illuminanceData, sensorData, mode, energyMode};
+  return {lightData, illuminanceData, sensorData, mode, energyMode, target};
 };
+
+const setTarget = (data) => {
+  target = data
+}
+
+const getTarget = () => {
+  return target
+}
 
 module.exports = {
   getFeed,
+  setTarget,
+  getTarget,
   getLightData,
   setLightData,
   getIlluminanceData,

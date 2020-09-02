@@ -45,7 +45,7 @@ export default function TotalUsageChart(props) {
             stroke="#FDB4A8"
             fill="#FDB4A8"
           />
-          <ReferenceLine y={props.expected} stroke="green" />
+          <ReferenceLine y={props.target} stroke="green" />
           <Legend />
           <Tooltip />
         </AreaChart>

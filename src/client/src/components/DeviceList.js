@@ -23,6 +23,13 @@ export default function DeviceList(props) {
               <RadioButton value="HYBRID">Tryb Hybrydowy</RadioButton>
             </RadioGroup>
           </div>
+          <div style={{paddingTop:"15px"}}>
+            <RadioGroup value={props.target} onChange={(value) => props.changeTarget(value)} horizontal>
+              <RadioButton value="500">500 lx</RadioButton>
+              <RadioButton value="300">300 lx</RadioButton>
+              <RadioButton value="SAME">Rownomiernosc</RadioButton>
+            </RadioGroup>
+          </div>
           <ul className="sensorsList">
             {props.sensorData.map((sensor) => (
               <Sensor sensor={sensor} />
