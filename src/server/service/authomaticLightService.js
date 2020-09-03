@@ -40,29 +40,17 @@ class AuthomaticLightService {
   calculateNewLightPowerValues(sensor) {
     lightsData = repository.getLightData();
     let newValues;
-    setValuesWithSensorData(sensor)
+    setValuesWithSensorData(sensor);
     switch (sensor.name) {
       case "Sensor 1":
-          newValues = this.sensorOneRegulator.getNewLightBottomTopPowerValues(
-          sensor.illuminance,
-          light.top,
-          light.bottom
-        );
-        return setNewPowerValuesAreaOne(newValues)
+        newValues = this.sensorOneRegulator.getNewLightBottomTopPowerValues(sensor.illuminance);
+        return setNewPowerValuesAreaOne(newValues);
       case "Sensor 2":
-          newValues = this.sensorTwoRegulator.getNewLightBottomTopPowerValues(
-          sensor.illuminance,
-          light.top,
-          light.bottom
-        );
-        return setNewPowerValuesAreaTwo(newValues)
+        newValues = this.sensorTwoRegulator.getNewLightBottomTopPowerValues(sensor.illuminance);
+        return setNewPowerValuesAreaTwo(newValues);
       case "Sensor 3":
-          newValues = this.sensorThreeRegulator.getNewLightBottomTopPowerValues(
-          sensor.illuminance,
-          light.top,
-          light.bottom
-        );
-        return setNewPowerValuesAreaThre(newValues)
+        newValues = this.sensorThreeRegulator.getNewLightBottomTopPowerValues(sensor.illuminance);
+        return setNewPowerValuesAreaThre(newValues);
       default:
         return;
     }
@@ -70,9 +58,9 @@ class AuthomaticLightService {
 }
 
 const setValuesWithSensorData = (sensor) => {
-    repository.setSensorData(sensor);
-    repository.setIlluminanceAvg();
-    repository.setIlluminanceData();
+  repository.setSensorData(sensor);
+  repository.setIlluminanceAvg();
+  repository.setIlluminanceData();
 };
 
 const setNewPowerValuesAreaOne = (newPowerValues) => {
@@ -98,12 +86,12 @@ const setNewPowerValuesAreaTwo = (newPowerValues) => {
 };
 
 const setNewPowerValuesAreaThree = (newPowerValues) => {
-    lightsData[3].bottom = newPowerValues.bottom
-    lightsData[7].bottom = newPowerValues.bottom
-    lightsData[3].top = newPowerValues.top
-    lightsData[7].top = newPowerValues.top
-    repository.setPower(lightsData)
-    return lightsData;
+  lightsData[3].bottom = newPowerValues.bottom;
+  lightsData[7].bottom = newPowerValues.bottom;
+  lightsData[3].top = newPowerValues.top;
+  lightsData[7].top = newPowerValues.top;
+  repository.setPower(lightsData);
+  return lightsData;
 };
 
 module.exports = AuthomaticLightService;

@@ -18,7 +18,7 @@ module.exports = (app, io) => {
     }
     interval = setInterval(() => utils.sendFeed(socket), 1000);
     socket.on("changePower", (data) =>
-      sendNewPower(LIGHT_URL, data).catch((error) => console.log(error))
+      utils.sendNewPower(LIGHT_URL, data).catch((error) => console.log(error))
     );
     socket.on("changeMode", (data) => db.setMode(data));
     socket.on("changeStrategy", (data) => authomaticLight.setStrategy(data));

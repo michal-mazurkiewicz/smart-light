@@ -14,7 +14,7 @@ export default function UsageChart(props) {
   return (
     <div className="data">
       <div style={{ padding: "5px" }}>
-        <h5>Usage by light:</h5>
+        <h5>Wykorzystanie opraw:</h5>
         <BarChart
           width={800}
           height={350}
