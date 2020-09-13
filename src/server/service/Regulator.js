@@ -1,15 +1,17 @@
-const Controller = require("node-pid-controller");
+const Controller = require("../controllers/controller");
 const LightingStrategy = require("./lightingStrategy");
 const Filter = require("./Filter");
 
 class Regulator {
   constructor(target, strategy) {
-    this.illuminanceController = new Controller(0.15, 0.1, 0.1, 1);
+    this.illuminanceController = new Controller(0.01, 0.095, 0);
     this.powerFilter = new Filter();
     this.lightingStrategy = new LightingStrategy();
-    setTarget(target);
-    setStrategy(strategy);
+    this.setTarget(target);
+    this.setStrategy(strategy);
   }
+//0.3, 0.05, 0.15 niezle
+//0.01, 0.08, 0 akceptowalne
 
   setTarget(target) {
     this.illuminanceController.setTarget(target);
@@ -21,14 +23,12 @@ class Regulator {
 
   getNewLightBottomTopPowerValues(sensorIlluminance) {
     let lightPowerValuesSum = this.getNewLightPowerValuesSum(sensorIlluminance);
+    console.log("PowerSum", lightPowerValuesSum)
     let powerTargets = this.lightingStrategy.getNewLightsPowerTargetValues(
       lightPowerValuesSum
     );
-
-    return this.powerFilter.getNewBottomTopPowerValue(
-      powerTargets.bottom,
-      powerTargets.bottom
-    );
+      console.log("Power targets: ", powerTargets)
+    return powerTargets;
   }
 
   getNewLightPowerValuesSum(sensorIlluminance) {

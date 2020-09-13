@@ -21,7 +21,7 @@ class LightBottomFilter{
         if(this.powerValues.length > 3){
             this.powerValues.splice(0, 1)
         }
-        return Math.round(this.powerValues.reduce((p,n) => p + n) / this.powerValues.length)
+        return newPowerValue;
     }
 }
 
@@ -32,10 +32,12 @@ class LightTopFilter{
 
     getNewTopPowerValue(newPowerValue){
         this.powerValues.push(newPowerValue)
-        if(this.powerValues.length > 3){
+        if(this.powerValues.length < 3){
+            return Math.round(this.powerValues.reduce((p,n) => p + n) / 3)
+        } else if(this.powerValues.length >= 3){
             this.powerValues.splice(0, 1)
         }
-        return Math.round(this.powerValues.reduce((p,n) => p + n) / this.powerValues.length)
+        return newPowerValue
     }
 }
 

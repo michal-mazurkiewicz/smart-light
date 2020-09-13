@@ -29,10 +29,14 @@ class AuthomaticLightService {
   setTarget(goal) {
     if (goal === "SAME") {
       let newGoal = repository.getSensorData()[0].illuminance;
-      illuminationRegulator.setTarget(newGoal);
+      this.sensorOneRegulator.setTarget(newGoal);
+      this.sensorTwoRegulator.setTarget(newGoal);
+      this.sensorThreeRegulator.setTarget(newGoal);
       repository.setTarget(newGoal);
     } else {
-      illuminationRegulator.setTarget(goal);
+      this.sensorOneRegulator.setTarget(goal);
+      this.sensorTwoRegulator.setTarget(goal);
+      this.sensorThreeRegulator.setTarget(goal);
       repository.setTarget(goal);
     }
   }
@@ -44,13 +48,16 @@ class AuthomaticLightService {
     switch (sensor.name) {
       case "Sensor 1":
         newValues = this.sensorOneRegulator.getNewLightBottomTopPowerValues(sensor.illuminance);
+        console.log("Sensor 1 values: ", newValues)
         return setNewPowerValuesAreaOne(newValues);
       case "Sensor 2":
         newValues = this.sensorTwoRegulator.getNewLightBottomTopPowerValues(sensor.illuminance);
+        console.log("Sensor 2 values: ", newValues)
         return setNewPowerValuesAreaTwo(newValues);
       case "Sensor 3":
         newValues = this.sensorThreeRegulator.getNewLightBottomTopPowerValues(sensor.illuminance);
-        return setNewPowerValuesAreaThre(newValues);
+        console.log("Sensor 1 values: ", newValues);
+        return setNewPowerValuesAreaThree(newValues);
       default:
         return;
     }

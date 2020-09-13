@@ -14,7 +14,8 @@ export default function TotalUsageChart(props) {
   return (
     <div className="chart">
       <div style={{ padding: "10px" }}>
-        <h5>Calkowite zuzycie mocy: {props.illuminanceData[props.illuminanceData.length - 1].power} % Natezenie oswietlenia: {props.illuminanceData[props.illuminanceData.length - 1].illuminance} lx</h5>
+        <h5>Calkowite zuzycie mocy: {Math.round(props.illuminanceData[props.illuminanceData.length - 1].power)} % </h5>
+        <h5>Srednie natezenie oswietlenia: {props.illuminanceData[props.illuminanceData.length - 1].illuminance} lx</h5>
         <AreaChart
           width={800}
           height={350}

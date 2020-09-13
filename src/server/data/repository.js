@@ -3,64 +3,64 @@ let moment = require("moment")
 let lightData = [
   {
     name: "Oprawa 1",
-    bottom: 0,
-    top: 0,
+    bottom: 1,
+    top: 1,
   },
   {
     name: "Oprawa 2",
-    bottom: 70,
-    top: 0,
+    bottom: 1,
+    top: 1,
   },
   {
     name: "Oprawa 3",
-    bottom: 100,
-    top: 30,
+    bottom: 1,
+    top: 1,
   },
   {
     name: "Oprawa 4",
-    bottom: 100,
-    top: 30,
+    bottom: 1,
+    top: 1,
   },
   {
     name: "Oprawa 5",
-    bottom: 100,
-    top: 40,
+    bottom: 1,
+    top: 1,
   },
   {
     name: "Oprawa 6",
-    bottom: 100,
-    top: 40,
+    bottom: 1,
+    top: 1,
   },
   {
     name: "Oprawa 7",
-    bottom: 80,
-    top: 30,
+    bottom: 1,
+    top: 1,
   },
   {
     name: "Oprawa 8",
-    bottom: 100,
-    top: 25,
+    bottom: 1,
+    top: 1,
   },
 ];
 
 let sensorData = [
-  { name: "Sensor 1", illuminance: 500 },
-  { name: "Sensor 2", illuminance: 450 },
-  { name: "Sensor 3", illuminance: 550 },
-  { name: "Average", illuminance: 500 },
+  { name: "Sensor 1", illuminance: 0 },
+  { name: "Sensor 2", illuminance: 0 },
+  { name: "Sensor 3", illuminance: 0 },
+  { name: "Average", illuminance: 0 },
 ];
 
 let illuminanceData = [
   {
-    time: "10",
-    illuminance: 100,
-    power: 10,
+    time: "0",
+    illuminance: 0,
+    power: 0,
   },
 ];
 
 let mode = "MANUAL";
 let strategy = "SAVE";
-let target = "500";
+let target = "300";
 
 const setLightData = (data) => {
   lightData = lightData.map((l) => l.name === data.name ? data : l);
@@ -68,7 +68,7 @@ const setLightData = (data) => {
 
 const setIlluminanceData = () => {
   illuminanceData.push({time: moment().format("HH:mm"), illuminance: getIlluminanceAvg(), power: getPowerAverage() })
-  if(illuminanceData.length > 20){
+  if(illuminanceData.length > 200){
     illuminanceData.splice(0, 1)
   }
 };
@@ -114,8 +114,8 @@ const getLightData = () => {
 };
 
 const getIlluminanceData = () => {
-  if(illuminanceData.length > 20){
-    illuminanceData = illuminanceData.slice(illuminanceData.length - 20, illuminanceData.length - 1)
+  if(illuminanceData.length > 200){
+    illuminanceData = illuminanceData.slice(illuminanceData.length - 200, illuminanceData.length - 1)
   }
   return illuminanceData;
 };
@@ -133,6 +133,7 @@ const getFeed = () => {
 };
 
 const setTarget = (data) => {
+  console.log("New Target: ", data)
   target = data
 }
 

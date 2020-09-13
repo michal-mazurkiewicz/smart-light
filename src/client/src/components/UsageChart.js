@@ -38,7 +38,7 @@ export default function UsageChart(props) {
           </defs>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" stroke="black" />
-          <YAxis stroke="black" />
+          <YAxis  ticks={[20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 255]} stroke="black" />
           <Legend />
           <Tooltip />
           <Bar dataKey="bottom" fillOpacity={1} fill="url(#colorPv)" />

@@ -26,27 +26,38 @@ class LightingStrategy {
   }
 
   getNewLightsPowerTargetValues(value){
-      this.strategy.getNewLightsPowerTargetValues(value)
+      return this.strategy.getNewLightsPowerTargetValues(value)
   }
 
-  
+
 }
 
 class BottomPriorityStrategy {
   getNewLightsPowerTargetValues(value) {
-    return { bottom: filterValue(value), top: filterValue(value - 255) };
+    console.log("Bottom priority: ", value)
+    let bottom = filterValue(value);
+    let newTopValue = value - 255;
+    let top = filterValue(newTopValue);
+    return { bottom: bottom, top: top };
   }
 }
 
 class TopPriorityStrategy {
   getNewLightsPowerTargetValues(value) {
-    return { bottom: filterValue(value - 255), top: filterValue(value) };
+    console.log("Top priority: ", value)
+    let top = filterValue(value);
+    let newBottomValue = value - 255;
+    let bottom = filterValue(newBottomValue);
+    return { bottom: bottom, top: top };
   }
 }
 
 class EqualPriorityStrategy {
   getNewLightsPowerTargetValues(value) {
-    return { bottom: filterValue(value / 2), top: filterValue(value / 2) };
+    console.log("Equal priority: ", value)
+    let bottom = filterValue(value/2);
+    let top = filterValue(value/2);
+    return { bottom: bottom, top: top };
   }
 }
 
@@ -61,7 +72,7 @@ const filterValue = (value) => {
     } else if (value > maxSaturation) {
       return maxSaturation;
     }
-    return value;
+    return Math.round(value);
 };
 
 

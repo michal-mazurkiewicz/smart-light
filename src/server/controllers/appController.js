@@ -16,13 +16,13 @@ module.exports = (app, io) => {
     if (interval) {
       clearInterval();
     }
-    interval = setInterval(() => utils.sendFeed(socket), 1000);
+    interval = setInterval(() => utils.sendFeed(socket), 500);
     socket.on("changePower", (data) =>
       utils.sendNewPower(LIGHT_URL, data).catch((error) => console.log(error))
     );
     socket.on("changeMode", (data) => db.setMode(data));
-    socket.on("changeStrategy", (data) => authomaticLight.setStrategy(data));
-    socket.on("changeTarget", (data) => automaticLightService.setTarget(data));
+    socket.on("changeStrategy", (data) => authomaticLightService.setStrategy(data));
+    socket.on("changeTarget", (data) => authomaticLightService.setTarget(data));
     socket.on("disconnect", () => {
       console.log("Client disconnected");
       clearInterval(interval);
@@ -30,17 +30,19 @@ module.exports = (app, io) => {
   });
 
   app.post("/sensor", function (req, res) {
+    console.log(req.body)
     if (db.getMode() === "MANUAL") {
       manualLightService.performManualLighting({
         name: req.body.name,
         illuminance: req.body.illumminance,
       });
     } else {
+      //TODO
       let data = authomaticLightService.calculateNewLightPowerValues({
         name: req.body.name,
         illuminance: req.body.illumminance,
       });
-      utils.sendNewPower(LIGHT_URL, data).catch((e) => console.log(e));
+      utils.sendNewPower(LIGHT_URL, data).catch((e) => {} );
     }
     res.status(200).send("OK");
   });

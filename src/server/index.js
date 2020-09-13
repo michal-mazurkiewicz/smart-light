@@ -27,3 +27,8 @@ app.get("/", function (req, res) {
 
 //Routing
 require("./controllers/appController")(app, io);
+
+//Zielony kabel ------- Bialy kabel
+// Czerwony ---> Pomarańczowo biały 
+// Niebieski ----->  Pomaranczowym
+//Masa -----> Niebieski, Niebiesko-biały

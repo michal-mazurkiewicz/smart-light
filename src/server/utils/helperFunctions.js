@@ -13,17 +13,16 @@ const sendNewPower = async (url, data) => {
     });
     try {
       const status = await response;
-      console.log("POST REQUEST /setLight: ", status.statusText);
     } catch (error) {
       console.log("Change Color Error: ", error);
     }
   };
-  
+
   const sendFeed = (socket) => {
     socket.emit("feed", repository.getFeed());
   };
 
-  
+
   module.exports = {
       sendNewPower,
       sendFeed,
