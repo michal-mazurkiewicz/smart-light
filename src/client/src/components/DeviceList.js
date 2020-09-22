@@ -33,7 +33,7 @@ const handleSetTarget = (value) => {
           <div style={{ paddingTop: "15px" }}>
             <RadioGroup
               value={props.strategy}
-              onChange={(value) => props.setStrategy(value)}
+              onChange={(value) => props.changeStrategy(value)}
               horizontal
             >
               <RadioButton value="SAVE">Oszczedzanie Energii</RadioButton>

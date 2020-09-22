@@ -105,7 +105,7 @@ const setPower = (data) => {
 };
 
 const getPowerAverage = () => {
-  let powerAvg = (lightData.reduce((p, n) => p + n.bottom, 0) / lightData.length) / 255
+  let powerAvg = ((lightData.reduce((p, n) => p + n.bottom, 0) + lightData.reduce((p, n) => p + n.top, 0)) / (lightData.length * 2)) / 256
   return powerAvg * 100;
 }
 
