@@ -3,22 +3,19 @@ const minSaturation = 1;
 
 class LightingStrategy {
   constructor() {
-    this.bottomPriorityStrategy = new BottomPriorityStrategy();
-    this.topPriorityStrategy = new TopPriorityStrategy();
-    this.equalPriorityStrategy = new EqualPriorityStrategy();
     this.strategy;
   }
 
   setStrategy(strategy) {
     switch (strategy) {
       case "SAVE":
-        this.strategy = this.bottomPriorityStrategy;
+        this.strategy = new BottomPriorityStrategy();
         return;
       case "FEEL":
-        this.strategy = this.topPriorityStrategy;
+        this.strategy = new TopPriorityStrategy();
         return;
       case "HYBRID":
-        this.strategy = this.equalPriorityStrategy;
+        this.strategy = new EqualPriorityStrategy();
         return;
       default:
         return;
@@ -28,8 +25,6 @@ class LightingStrategy {
   getNewLightsPowerTargetValues(value){
       return this.strategy.getNewLightsPowerTargetValues(value)
   }
-
-
 }
 
 class BottomPriorityStrategy {
